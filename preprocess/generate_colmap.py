@@ -130,15 +130,15 @@ if __name__ == '__main__':
         sys.exit(1)
 
     ## Simplify images so that everything takes less time (reading colmap usually takes forever)
-    simplify_images_args = [
-        "python", f"preprocess/simplify_images.py",
-        "--base_dir", f"{args.project_dir}/camera_calibration/unrectified/sparse/0"
-    ]
-    try:
-        subprocess.run(simplify_images_args, check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Error executing simplify_images: {e}")
-        sys.exit(1)
+    # simplify_images_args = [
+    #     "python", f"preprocess/simplify_images.py",
+    #     "--base_dir", f"{args.project_dir}/camera_calibration/unrectified/sparse/0"
+    # ]
+    # try:
+    #     subprocess.run(simplify_images_args, check=True)
+    # except subprocess.CalledProcessError as e:
+    #     print(f"Error executing simplify_images: {e}")
+    #     sys.exit(1)
 
     ## Undistort images
     print(f"undistorting images from {args.images_dir} to {args.project_dir}/camera_calibration/rectified images...")

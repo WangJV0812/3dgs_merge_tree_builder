@@ -104,7 +104,7 @@ if __name__ == '__main__':
                 if os.path.exists(intermediate_dir):
                     print(f"{intermediate_dir} exists! Per chunk triangulation might crash!")
                 prepare_chunk_args = [
-                        "python", f"preprocess/prepare_chunk.py",
+                        "python", "-u", f"preprocess/prepare_chunk.py",
                         "--raw_chunk", in_dir, "--out_chunk", out_dir, 
                         "--images_dir", images_dir
                 ]

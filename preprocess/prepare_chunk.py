@@ -111,7 +111,7 @@ if __name__ == '__main__':
 
     if args.skip_bundle_adjustment:
         subprocess.run([colmap_exe, "point_triangulator",
-            "--Mapper.ba_global_max_num_iterations", "5",
+            # "--Mapper.ba_global_max_num_iterations", "5",
             "--Mapper.ba_global_max_refinements", "1", 
             "--database_path", f"{bundle_adj_chunk}/database.db",
             "--image_path", f"{bundle_adj_chunk}/images",
@@ -121,58 +121,66 @@ if __name__ == '__main__':
     else:
         colmap_point_triangulator_args = [
             colmap_exe, "point_triangulator",
-            "--Mapper.ba_global_function_tolerance", "0.000001",
-            "--Mapper.ba_global_max_num_iterations", "30",
+            # "--Mapper.ba_global_function_tolerance", "0.000001",
+            # "--Mapper.ba_global_max_num_iterations", "30",
             "--Mapper.ba_global_max_refinements", "3",
             ]
 
         colmap_bundle_adjuster_args = [
             colmap_exe, "bundle_adjuster",
             "--BundleAdjustment.refine_extra_params", "0",
-            "--BundleAdjustment.function_tolerance", "0.000001",
-            "--BundleAdjustment.max_linear_solver_iterations", "100",
-            "--BundleAdjustment.max_num_iterations", "50", 
+            # "--BundleAdjustment.function_tolerance", "0.000001",
+            # "--BundleAdjustment.max_linear_solver_iterations", "100",
+            # "--BundleAdjustment.max_num_iterations", "50", 
             "--BundleAdjustment.refine_focal_length", "0"
             ]
         # 2 rounds of triangulation + bundle adjustment
         try:
-            subprocess.run(colmap_point_triangulator_args + [
+            result = subprocess.run(colmap_point_triangulator_args + [
                 "--database_path", f"{bundle_adj_chunk}/database.db",
                 "--image_path", f"{bundle_adj_chunk}/images",
                 "--input_path", f"{bundle_adj_chunk}/sparse/o",
                 "--output_path", f"{bundle_adj_chunk}/sparse/t",
-                ], check=True)
+                ], capture_output=True, text=True, check=True)
         except subprocess.CalledProcessError as e:
-            print(f"Error executing colmap_point_triangulator_args: {e}")
+            print(f"Error executing colmap_point_triangulator_args: {e}", file=sys.stderr)
+            if hasattr(e, 'stderr') and e.stderr:
+                print(f"STDERR:\n{e.stderr}", file=sys.stderr)
             sys.exit(1)
 
         try:
-            subprocess.run(colmap_bundle_adjuster_args + [
+            result = subprocess.run(colmap_bundle_adjuster_args + [
                 "--input_path", f"{bundle_adj_chunk}/sparse/t",
                 "--output_path", f"{bundle_adj_chunk}/sparse/b",
-            ], check=True)
+            ], capture_output=True, text=True, check=True)
         except subprocess.CalledProcessError as e:
-            print(f"Error executing colmap_bundle_adjuster_args: {e}")
+            print(f"Error executing colmap_bundle_adjuster_args: {e}", file=sys.stderr)
+            if hasattr(e, 'stderr') and e.stderr:
+                print(f"STDERR:\n{e.stderr}", file=sys.stderr)
             sys.exit(1)
 
         try:
-            subprocess.run(colmap_point_triangulator_args + [
+            result = subprocess.run(colmap_point_triangulator_args + [
                 "--database_path", f"{bundle_adj_chunk}/database.db",
                 "--image_path", f"{bundle_adj_chunk}/images",
                 "--input_path", f"{bundle_adj_chunk}/sparse/b",
                 "--output_path", f"{bundle_adj_chunk}/sparse/t2",
-                ], check=True)
+                ], capture_output=True, text=True, check=True)
         except subprocess.CalledProcessError as e:
-            print(f"Error executing colmap_point_triangulator_args: {e}")
+            print(f"Error executing colmap_point_triangulator_args (round 2): {e}", file=sys.stderr)
+            if hasattr(e, 'stderr') and e.stderr:
+                print(f"STDERR:\n{e.stderr}", file=sys.stderr)
             sys.exit(1)
 
         try:
-            subprocess.run(colmap_bundle_adjuster_args + [
+            result = subprocess.run(colmap_bundle_adjuster_args + [
                 "--input_path", f"{bundle_adj_chunk}/sparse/t2",
                 "--output_path", f"{bundle_adj_chunk}/sparse/0",
-            ], check=True)
+            ], capture_output=True, text=True, check=True)
         except subprocess.CalledProcessError as e:
-            print(f"Error executing colmap_bundle_adjuster_args: {e}")
+            print(f"Error executing colmap_bundle_adjuster_args (round 2): {e}", file=sys.stderr)
+            if hasattr(e, 'stderr') and e.stderr:
+                print(f"STDERR:\n{e.stderr}", file=sys.stderr)
             sys.exit(1)
 
     transform_colmap_args = [

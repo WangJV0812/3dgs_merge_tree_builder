@@ -121,7 +121,7 @@ if __name__ == '__main__':
         "--database_path", f"{args.project_dir}/camera_calibration/unrectified/database.db",
         "--image_path", f"{args.images_dir}",
         "--output_path", f"{args.project_dir}/camera_calibration/unrectified/sparse",
-        "--Mapper.ba_global_function_tolerance", "0.000001" 
+        # "--Mapper.ba_global_function_tolerance", "0.000001" 
         ]
     try:
         subprocess.run(colmap_hierarchical_mapper_args, check=True)

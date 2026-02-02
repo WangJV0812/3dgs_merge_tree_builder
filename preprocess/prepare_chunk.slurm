@@ -45,11 +45,18 @@ cp ${RAW_CHUNK}/sparse/0/images.bin ${RAW_CHUNK}/sparse/0/cameras.bin ${BUNDLE_A
 touch ${BUNDLE_ADJ_CHUNK}/sparse/o/points3D.bin
 
 ## 2 Rounds of triangulation + bundle adjustment
-colmap point_triangulator --Mapper.ba_global_function_tolerance 0.000001 --Mapper.ba_global_max_num_iterations 30 --Mapper.ba_global_max_refinements 3 --database_path ${BUNDLE_ADJ_CHUNK}/database.db --image_path ${BUNDLE_ADJ_CHUNK}/images --input_path ${BUNDLE_ADJ_CHUNK}/sparse/o --output_path ${BUNDLE_ADJ_CHUNK}/sparse/t
-colmap bundle_adjuster --BundleAdjustment.refine_extra_params 0 --BundleAdjustment.function_tolerance 0.000001 --BundleAdjustment.max_linear_solver_iterations 100 --BundleAdjustment.max_num_iterations 50 --BundleAdjustment.refine_focal_length 0 --input_path ${BUNDLE_ADJ_CHUNK}/sparse/t --output_path ${BUNDLE_ADJ_CHUNK}/sparse/b
+colmap point_triangulator --Mapper.ba_global_max_refinements 3 --database_path ${BUNDLE_ADJ_CHUNK}/database.db --image_path ${BUNDLE_ADJ_CHUNK}/images --input_path ${BUNDLE_ADJ_CHUNK}/sparse/o --output_path ${BUNDLE_ADJ_CHUNK}/sparse/t
+colmap bundle_adjuster --BundleAdjustment.refine_extra_params 0 --BundleAdjustment.refine_focal_length 0 --input_path ${BUNDLE_ADJ_CHUNK}/sparse/t --output_path ${BUNDLE_ADJ_CHUNK}/sparse/b
 
-colmap point_triangulator --Mapper.ba_global_function_tolerance 0.000001 --Mapper.ba_global_max_num_iterations 30 --Mapper.ba_global_max_refinements 3 --database_path ${BUNDLE_ADJ_CHUNK}/database.db --image_path ${BUNDLE_ADJ_CHUNK}/images --input_path ${BUNDLE_ADJ_CHUNK}/sparse/b --output_path ${BUNDLE_ADJ_CHUNK}/sparse/t2
-colmap bundle_adjuster --BundleAdjustment.refine_extra_params 0 --BundleAdjustment.function_tolerance 0.000001 --BundleAdjustment.max_linear_solver_iterations 100 --BundleAdjustment.max_num_iterations 50 --BundleAdjustment.refine_focal_length 0 --input_path ${BUNDLE_ADJ_CHUNK}/sparse/t2 --output_path ${BUNDLE_ADJ_CHUNK}/sparse/0
+colmap point_triangulator --Mapper.ba_global_max_refinements 3 --database_path ${BUNDLE_ADJ_CHUNK}/database.db --image_path ${BUNDLE_ADJ_CHUNK}/images --input_path ${BUNDLE_ADJ_CHUNK}/sparse/b --output_path ${BUNDLE_ADJ_CHUNK}/sparse/t2
+colmap bundle_adjuster --BundleAdjustment.refine_extra_params 0 --BundleAdjustment.max_linear_solver_iterations 100 --BundleAdjustment.refine_focal_length 0 --input_path ${BUNDLE_ADJ_CHUNK}/sparse/t2 --output_path ${BUNDLE_ADJ_CHUNK}/sparse/0
+
+
+# colmap point_triangulator --Mapper.ba_global_function_tolerance 0.000001 --Mapper.ba_global_max_num_iterations 30 --Mapper.ba_global_max_refinements 3 --database_path ${BUNDLE_ADJ_CHUNK}/database.db --image_path ${BUNDLE_ADJ_CHUNK}/images --input_path ${BUNDLE_ADJ_CHUNK}/sparse/o --output_path ${BUNDLE_ADJ_CHUNK}/sparse/t
+# colmap bundle_adjuster --BundleAdjustment.refine_extra_params 0 --BundleAdjustment.function_tolerance 0.000001 --BundleAdjustment.max_linear_solver_iterations 100 --BundleAdjustment.max_num_iterations 50 --BundleAdjustment.refine_focal_length 0 --input_path ${BUNDLE_ADJ_CHUNK}/sparse/t --output_path ${BUNDLE_ADJ_CHUNK}/sparse/b
+
+# colmap point_triangulator --Mapper.ba_global_function_tolerance 0.000001 --Mapper.ba_global_max_num_iterations 30 --Mapper.ba_global_max_refinements 3 --database_path ${BUNDLE_ADJ_CHUNK}/database.db --image_path ${BUNDLE_ADJ_CHUNK}/images --input_path ${BUNDLE_ADJ_CHUNK}/sparse/b --output_path ${BUNDLE_ADJ_CHUNK}/sparse/t2
+# colmap bundle_adjuster --BundleAdjustment.refine_extra_params 0 --BundleAdjustment.function_tolerance 0.000001 --BundleAdjustment.max_linear_solver_iterations 100 --BundleAdjustment.max_num_iterations 50 --BundleAdjustment.refine_focal_length 0 --input_path ${BUNDLE_ADJ_CHUNK}/sparse/t2 --output_path ${BUNDLE_ADJ_CHUNK}/sparse/0
 
 ## Correct shifts that might have happened when bundle adjusting
 python ${PREPROCESS_DIR}/transform_colmap.py --in_dir ${RAW_CHUNK} --new_colmap_dir ${BUNDLE_ADJ_CHUNK} --out_dir ${OUT_CHUNK}
